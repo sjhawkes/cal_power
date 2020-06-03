@@ -1,12 +1,11 @@
-# California power generation:  planning for the future
+# California power:  optimizing a flexible grid
 
 ## Problem Statement:
 
-Electrical power generation in the state of California comes from a patchwork of predominantly natural gas, hydro, and renewable energy power as well as a single nuclear powerplant (Diablo Canyon) and a few large out of state sources (Columbia River hydro, Utah coal plants, etc). As the population changes and the restrictions on non-renewable energy sources are tightened, how will the California power production and consumption change?  In this project I seek to predict where there may be opportunities to capture new market demands in an efficient and profitable way.
+In an effort to reduce greenhouse emissions, the state of California is pursuing an expansion of its renewable energy portfolio. While green power sources like solar and wind are emissions free they are not constant, it is not always sunny and it is not always windy. To make best use of these time-variable resources it is important to have an accurate production forecast so that other flexible fuel sources like gas and hydro can be prepared to meet the net demand. To achieve this goal I incorporate time series weather and electricity supply data to model seasonal and daily fluctuations and produce a week-ahead forecast model for wind and solar contributions to the California state energy portfolio.
 
 ## Background
-
-The table below shows the current breakdown of California power production.
+Electrical power generation in the state of California comes from a patchwork of natural gas, hydro, and renewable energy power as well as a single nuclear powerplant (Diablo Canyon) and a few large out of state sources (Columbia River hydro, Utah coal plants, etc). The table below shows the current breakdown of California power production.
 
 | Fuel Type | In-State Generation (GWh) |  In-State Generation (%) | NW Imports (GWh) | SW Imports (GWh) | Energy Mix (GWh) | Power Mix (%) |
 | - | - | - | - | - | - | - |
@@ -28,14 +27,83 @@ The table below shows the current breakdown of California power production.
 **Other:** Petroleum Coke/Waste Heat
 
 
-The map below shows power consumption by county.  Note that Los Angeles county consumes substantially more power than any other county in California.
+### Power consumption at the county scale
+The map below shows log power consumption by county.  As expected the two major metropolitan areas in the San Francisco Bay region and greater Los Angeles region consume the lions share of electricity in California. Also of note is the Sacramento River delta region, San Joaquin Valley, and the Imperial Valley. Note that the color scale here is in log GWh, this choice was made because Los Angeles county consumes substantially more power than any other county in California and when plotted on a linear scale it is difficult to see the next highest contenders .
 
-<img src="./images/total_usage.png" alt="Example" width="600" height="">
+<img src="./images/log_usage.png" alt="Example" width="600" height="">
 
-The map below shows per capita power consumption by county.  Note that Kern county is actually the largest per capita consumer of power in California.
+## Demand forecasting
 
-<img src="./images/pc_usage.png" alt="Example" width="600" height="">
+#### Two year cycle
+- Seasonal changes
+- High in the summer low in the winter
+- Daily deviations are relatively strong
 
-The map below shows the population growth rate by county as a percentage. Note that most counties show some amount of growth, with only rural outlying counties showing negative growth.
+<img src="./images/two_year_cycle.png" alt="Example" width="600" height="">
 
-<img src="./images/growth.png" alt="Example" width="600" height="">
+#### Three day cycle
+- Morning pulse, afternoon lag, evening pulse, nightly drop
+- Weekend morning low
+
+<img src="./images/three_day_cycle.png" alt="Example" width="600" height="">
+
+#### Autoregression model
+- Trained on two years of demand data
+- Computes week ahead prediction in late May, 2020
+- Overpredicts Mon-Wed-Fri (COVID?)
+- Captures weekend low
+- Needs tuning on annual seasons, manages weekends
+
+<img src="./images/autoregressive_model.png" alt="Example" width="600" height="">
+
+## Supply forecasting
+- LA County produces the most
+
+<img src="./images/total_production.png" alt="Example" width="600" height="">
+
+- Annual flucturations
+
+<img src="./images/two_year_supply.png" alt="Example" width="600" height="">
+
+- Highlight fluctuations in renewables at daily scale
+- Highlight imports
+
+<img src="./images/three_day_supply.png" alt="Example" width="600" height="">
+
+### Renewables
+
+- Higher in summer, lower in winter
+
+<img src="./images/renewable_seasonal.png" alt="Example" width="600" height="">
+
+- Daily trends
+
+<img src="./images/renewable_daily.png" alt="Example" width="600" height="">
+
+### Solar
+
+- Cluster map
+
+
+
+- Week ahead forecast
+
+<img src="./images/uv_linear_model.png" alt="Example" width="600" height="">
+
+
+### Combine AR ahead with UV cluster model
+- Forecast net demand
+
+
+
+### Wind forecasting
+- Cluster map
+- Day ahead
+- Week ahead
+
+
+
+## Planning for population change
+The California power portfolio is not the only thing changing with time.  Making up nearly 15% of the nations GDP, California is an appealing state to live in and will likely see continued growth in the coming decades. The map below combines per capita power consumption by county multiplied by the percent population change measured between the 2010 and 2020 census.  While the units on this color scale are arbitrary, this map gives an idea of where increased demand is likely to arise in the near future. Regions of interest include the East Bay, Sacramento River Delta, northern San Joaquin Valley, Kern county and Riverside county. 
+
+<img src="./images/pc_usage-growth.png" alt="Example" width="600" height="">
