@@ -17,24 +17,24 @@ From these three forecasts it is possible to estimate the net demand to be met b
 Gas and hydro plant operators can use this information to be prepared for a range of ramp rates depending on the forecast.
 
 ## Repository Contents
-Section names link to methods summaries, notebook names link to jupyter notebooks containing the described code. This repository is self-contained and can be forked, cloned, and excecuted as is. For a summary of the study results, click <a href='#results'>here</a>.
+Section names link to methods summaries, notebook names link to jupyter notebooks containing the described code. This repository is self-contained and can be forked, cloned, and excecuted as is. A brief summary of results can be found [here](https://github.com/sjhawkes/cal_power/blob/master/cal_power.pdf).
 
 | Section | Notebooks | Description |
 | - | - | - |
 | <a href='#demand_forecasting'>Demand Forecasting</a> | [CAISO demand scraper](https://github.com/sjhawkes/cal_power/blob/master/code/01A_DemandScraper.ipynb) | Collects time series data demand data from the  California ISO webpage |
-| | Demand EDA | Exploratory data analysis of demand data |
-| | Autogression model | Creates week ahead demand forecast from two years of time-series demand data from 2018-2020 |
-| <a href='#supply_analysis'>Supply Analysis</a> | CAISO supply scraper | Collects time series data electrical supply data from the  California ISO webpage |
-| | CAISO renewables scraper | Collects time series renewable supply data from California ISO webpage |
-| | Supply EDA | Exploratory data analysis of electrical supply data |
-| <a href='#solar_forecasting'>Solar Forecasting</a> | Kmeans clustering of solar plants | Groups over 800 solar power plants by lat-lon coordinates into 30 clusters with similar weather |
-| | UV index scraper | Collects time-series UV index data from darksky.net |
-| | Linear regression model | Creates week ahead forecast for solar output from training on UV index data and time of day versus solar production |
-| <a href='#wind_forecasting'>Wind Forecasting</a> | Kmeans clustering of wind plants | Groups over 100 wind farms by lat-lon coordinates into 7 clusters with similar weather |
-| | Wind speed scraper | Collects time-series wind speed data from darsky.net |
-| | Linear regression model | Creates week ahead forecast for solar output from training on time-series windspeed and humidity data versus wind production |
-| <a href='#net_demand_forecasting'>Net Demand Forecasting</a> | Net demand forecast | Combines demand forecast, solar production forecast, and wind production forecast in order to model net demand |
-| <a href='#energy_maps'>Energy Maps</a> | County mapper | Creates choropleth maps of power production/consumption by county, population and population change, and types of power production |
+| | [Demand EDA](https://github.com/sjhawkes/cal_power/blob/master/code/01B_DemandEDA.ipynb) | Exploratory data analysis of demand data |
+| | [Autogression model](https://github.com/sjhawkes/cal_power/blob/master/code/01C_DemandARModel.ipynb) | Creates week ahead demand forecast from two years of time-series demand data from 2018-2020 |
+| <a href='#supply_analysis'>Supply Analysis</a> | [CAISO supply scraper](https://github.com/sjhawkes/cal_power/blob/master/code/02A_SupplyTotalScraper.ipynb) | Collects time series data electrical supply data from the  California ISO webpage |
+| | [CAISO renewables scraper](https://github.com/sjhawkes/cal_power/blob/master/code/02B_SupplyRenewableScraper.ipynb) | Collects time series renewable supply data from California ISO webpage |
+| | [Supply EDA](https://github.com/sjhawkes/cal_power/blob/master/code/02C_SupplyEDA.ipynb) | Exploratory data analysis of electrical supply data |
+| <a href='#solar_forecasting'>Solar Forecasting</a> | [Kmeans clustering of solar plants](https://github.com/sjhawkes/cal_power/blob/master/code/03A_SolarKMeansClustering.ipynb) | Groups over 800 solar power plants by lat-lon coordinates into 30 clusters with similar weather |
+| | [UV index scraper](https://github.com/sjhawkes/cal_power/blob/master/code/03B_SolarUVScraper.ipynb) | Collects time-series UV index data from darksky.net |
+| | [Linear regression model](https://github.com/sjhawkes/cal_power/blob/master/code/03C_SolarLRModel.ipynb) | Creates week ahead forecast for solar output from training on UV index data and time of day versus solar production |
+| <a href='#wind_forecasting'>Wind Forecasting</a> | [Kmeans clustering of wind plants](https://github.com/sjhawkes/cal_power/blob/master/code/04A_WindKMeansClustering.ipynb) | Groups over 100 wind farms by lat-lon coordinates into 7 clusters with similar weather |
+| | [Wind speed scraper](https://github.com/sjhawkes/cal_power/blob/master/code/04B_WindSpeedScraper.ipynb) | Collects time-series wind speed data from darsky.net |
+| | [Linear regression model](https://github.com/sjhawkes/cal_power/blob/master/code/04C_WindLRModel.ipynb) | Creates week ahead forecast for solar output from training on time-series windspeed and humidity data versus wind production |
+| <a href='#net_demand_forecasting'>Net Demand Forecasting</a> | [Net demand forecast](https://github.com/sjhawkes/cal_power/blob/master/code/05A_NetDemandForecast.ipynb) | Combines demand forecast, solar production forecast, and wind production forecast in order to model net demand |
+| <a href='#energy_maps'>Energy Maps</a> | [County mapper](https://github.com/sjhawkes/cal_power/blob/master/code/06_CountyMapper.ipynb) | Creates choropleth maps of power production/consumption by county, population and population change, and types of power production |
 
 ### Software Requirements
 
@@ -151,6 +151,8 @@ To generate the forecast I used an autoregression model with 312 lagged channels
 - Captures weekend low
 - Needs tuning on annual seasons, manages weekends
 
+<a id='solar_forecasting'></a>
+
 #### Solar Forecast
 
 Solar power in California comes from a collection of 849 plants distributed throughout the state as well as imports from plants in Nevada and Arizona. To forecast output from these plants, I collected time-series UV index from Darksky. This website keeps historical weather data accessible and is searchable using lat-lon coordinates and dates. Rather than collect weather data on over 800 locations, I used KMeans clustering to group solar plants into populations that should have similar weather forecasts.
@@ -167,6 +169,8 @@ The colors on the map above indicate the identity of the power plant clusters. U
 
 The graph above shows the results of the linear regression model used to forecast ahead one week of solar plant production from time-series UV index data. The model explains 91.5% of the variation in production and matches daily variations well. Production around midday tends to be overpredicted and production in the morning and evening tends to be underestimated. To capture these more effectively I plan to incorporate features for day of year and hour of day in future versions.
 
+<a id='wind_forecasting'></a>
+
 ### Wind forecasting
 
 Wind power in California contributed by 137 wind farms. I used KMeans clustering to reduce the number of locations to 7 groups with similar weather forecasts. Three months of wind speed data is collected for each centroid location and weighted by the total cluster production capacity.
@@ -181,7 +185,7 @@ Wind speed data from the seven clusters shown on the map above are used as the i
 
 The graph above shows the predicted wind farm production forecast derived from the linear regression model. The model describes 70% of the variation in wind production. The overall changes in production are well accounted for, however the lows are significantly over predicted. This model is very simple at the moment and could likely be improved by collecting humidity, temperature, and pressure data, as these effect the air viscosity and therefore speed at which the windmill blades can spin.
 
-<a id='net_demand'></a>
+<a id='net_demand_forecasting'></a>
 
 ### Net Demand
 
