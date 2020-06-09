@@ -17,14 +17,14 @@ From these three forecasts it is possible to estimate the net demand to be met b
 Gas and hydro plant operators can use this information to be prepared for a range of ramp rates depending on the forecast.
 
 ## Repository Contents
-Section names link to methods summaries, notebook names link to jupyter notebooks containing the described code. This repository is self-contained and can be forked, cloned, and excecuted as is. A brief summary of results can be found [here](https://github.com/sjhawkes/cal_power/blob/master/cal_power.pdf).
+Forecasting section names link to methods summaries below, notebook names link to jupyter notebooks containing the described code. This repository is self-contained and can be forked, cloned, and excecuted as is. A brief summary of results can be found [here](https://github.com/sjhawkes/cal_power/blob/master/cal_power.pdf).
 
 | Section | Notebooks | Description |
 | - | - | - |
 | <a href='#demand_forecasting'>Demand Forecasting</a> | [CAISO demand scraper](https://github.com/sjhawkes/cal_power/blob/master/code/01A_DemandScraper.ipynb) | Collects time series data demand data from the  California ISO webpage |
 | | [Demand EDA](https://github.com/sjhawkes/cal_power/blob/master/code/01B_DemandEDA.ipynb) | Exploratory data analysis of demand data |
 | | [Autogression model](https://github.com/sjhawkes/cal_power/blob/master/code/01C_DemandARModel.ipynb) | Creates week ahead demand forecast from two years of time-series demand data from 2018-2020 |
-| <a href='#supply_analysis'>Supply Analysis</a> | [CAISO supply scraper](https://github.com/sjhawkes/cal_power/blob/master/code/02A_SupplyTotalScraper.ipynb) | Collects time series data electrical supply data from the  California ISO webpage |
+| Supply Analysis | [CAISO supply scraper](https://github.com/sjhawkes/cal_power/blob/master/code/02A_SupplyTotalScraper.ipynb) | Collects time series data electrical supply data from the  California ISO webpage |
 | | [CAISO renewables scraper](https://github.com/sjhawkes/cal_power/blob/master/code/02B_SupplyRenewableScraper.ipynb) | Collects time series renewable supply data from California ISO webpage |
 | | [Supply EDA](https://github.com/sjhawkes/cal_power/blob/master/code/02C_SupplyEDA.ipynb) | Exploratory data analysis of electrical supply data |
 | <a href='#solar_forecasting'>Solar Forecasting</a> | [Kmeans clustering of solar plants](https://github.com/sjhawkes/cal_power/blob/master/code/03A_SolarKMeansClustering.ipynb) | Groups over 800 solar power plants by lat-lon coordinates into 30 clusters with similar weather |
@@ -34,7 +34,7 @@ Section names link to methods summaries, notebook names link to jupyter notebook
 | | [Wind speed scraper](https://github.com/sjhawkes/cal_power/blob/master/code/04B_WindSpeedScraper.ipynb) | Collects time-series wind speed data from darsky.net |
 | | [Linear regression model](https://github.com/sjhawkes/cal_power/blob/master/code/04C_WindLRModel.ipynb) | Creates week ahead forecast for solar output from training on time-series windspeed and humidity data versus wind production |
 | <a href='#net_demand_forecasting'>Net Demand Forecasting</a> | [Net demand forecast](https://github.com/sjhawkes/cal_power/blob/master/code/05A_NetDemandForecast.ipynb) | Combines demand forecast, solar production forecast, and wind production forecast in order to model net demand |
-| <a href='#energy_maps'>Energy Maps</a> | [County mapper](https://github.com/sjhawkes/cal_power/blob/master/code/06_CountyMapper.ipynb) | Creates choropleth maps of power production/consumption by county, population and population change, and types of power production |
+| Energy Maps | [County mapper](https://github.com/sjhawkes/cal_power/blob/master/code/06_CountyMapper.ipynb) | Creates choropleth maps of power production/consumption by county, population and population change, and types of power production |
 
 ### Software Requirements
 
