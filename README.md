@@ -21,20 +21,22 @@ Section names link to methods summaries, notebook names link to jupyter notebook
 
 | Section | Notebooks | Description |
 | - | - | - |
-| <a href='#demand_forecasting'>Demand Forecasting</a> | CAISO website scraper | Collects time series data demand data from the  California ISO webpage |
+| <a href='#demand_forecasting'>Demand Forecasting</a> | CAISO demand scraper | Collects time series data demand data from the  California ISO webpage |
+| | Demand EDA | Exploratory data analysis of demand data |
 | | Autogression model | Creates week ahead demand forecast from two years of time-series demand data from 2018-2020 |
-| <a href='#solar_forecasting'>Solar Forecasting</a> | CAISO website scraper | Collects time series solar supply data from the California ISO webpage |
-| | Kmeans clustering of solar plants | Groups over 800 solar power plants by lat-lon coordinates into 30 clusters with similar weather |
+| <a href='#supply_analysis'>Supply Analysis</a> | CAISO supply scraper | Collects time series data electrical supply data from the  California ISO webpage |
+| | CAISO renewables scraper | Collects time series renewable supply data from California ISO webpage |
+| | Supply EDA | Exploratory data analysis of electrical supply data |
+| <a href='#solar_forecasting'>Solar Forecasting</a> | Kmeans clustering of solar plants | Groups over 800 solar power plants by lat-lon coordinates into 30 clusters with similar weather |
 | | UV index scraper | Collects time-series UV index data from darksky.net |
 | | Linear regression model | Creates week ahead forecast for solar output from training on UV index data and time of day versus solar production |
-| <a href='#wind_forecasting'>Wind Forecasting</a> | CAISO website scraper | Collects time series solar supply data from the California ISO webpage |
-| | Kmeans clustering of wind plants | Groups over 100 wind farms by lat-lon coordinates into 7 clusters with similar weather |
-| | Windspeed and humidity scraper | Collects time-series wind and humidity data from darsky.net |
+| <a href='#wind_forecasting'>Wind Forecasting</a> | Kmeans clustering of wind plants | Groups over 100 wind farms by lat-lon coordinates into 7 clusters with similar weather |
+| | Wind speed scraper | Collects time-series wind speed data from darsky.net |
 | | Linear regression model | Creates week ahead forecast for solar output from training on time-series windspeed and humidity data versus wind production |
-| <a href='#net_demand_forecasting'>Net Demand Forecasting</a> | no books yet here | nothing to say |
+| <a href='#net_demand_forecasting'>Net Demand Forecasting</a> | Net demand forecast | Combines demand forecast, solar production forecast, and wind production forecast in order to model net demand |
 | <a href='#energy_maps'>Energy Maps</a> | County mapper | Creates choropleth maps of power production/consumption by county, population and population change, and types of power production |
 
-#### Software Requirements
+### Software Requirements
 
 **Data Collection**
 - Webdriver Manager
@@ -51,7 +53,7 @@ Section names link to methods summaries, notebook names link to jupyter notebook
 - Statsmodels
 - Sklearn
 
-<img src="./images/log_usage.png" alt="Example" width="600" height="">
+<img src="./images/log_usage.png" alt="Example" width="450" height="">
 
 ## Background
 
@@ -151,34 +153,62 @@ To generate the forecast I used an autoregression model with 312 lagged channels
 
 #### Solar Forecast
 
-Solar power in California comes from a patchwork of 849 plants distributed throughout the state as well as imports from plants in Nevada and Arizona. To forecast output from these plants, I collected time-series UV index from Darksky. This website keeps historical weather data accessible and is searchable using lat-lon coordinates and dates. Rather than collect weather data on over 800 locations, I used KMeans clustering to group solar plants into populations that should have similar weather forecasts.
+Solar power in California comes from a collection of 849 plants distributed throughout the state as well as imports from plants in Nevada and Arizona. To forecast output from these plants, I collected time-series UV index from Darksky. This website keeps historical weather data accessible and is searchable using lat-lon coordinates and dates. Rather than collect weather data on over 800 locations, I used KMeans clustering to group solar plants into populations that should have similar weather forecasts.
 
-<img src="./images/solar_clusters.png" alt="Example" width="600" height="">
+<img src="./images/solar_clusters.png" alt="Example" width="420" height="">
 
 **Solar Farm Clusters**
 
-The colors on the map above show 
+The colors on the map above indicate the identity of the power plant clusters. UV index data is collected for the center of each grouping and is weighted by the total sum of the cluster production capacity. This data serves as the input to a linear regression model that is trained on total solar farm production data.
 
-<img src="./images/uv_linear_model.png" alt="Example" width="600" height="">
+<img src="./images/solar_forecast.png" alt="Example" width="420" height="">
+
+**Solar Forecast**
+
+The graph above shows the results of the linear regression model used to forecast ahead one week of solar plant production from time-series UV index data. The model explains 91.5% of the variation in production and matches daily variations well. Production around midday tends to be overpredicted and production in the morning and evening tends to be underestimated. To capture these more effectively I plan to incorporate features for day of year and hour of day in future versions.
 
 ### Wind forecasting
-- Cluster map
-- Day ahead
-- Week ahead
+
+Wind power in California contributed by 137 wind farms. I used KMeans clustering to reduce the number of locations to 7 groups with similar weather forecasts. Three months of wind speed data is collected for each centroid location and weighted by the total cluster production capacity.
+
+<img src="./images/wind_clusters.png" alt="Example" width="420" height="">
+
+**Wind Farm Clusters**
+
+Wind speed data from the seven clusters shown on the map above are used as the inputs to a linear regression model. The model relies only on windspeed and the total windfarm capacity.
+
+<img src="./images/wind_forecast.png" alt="Example" width="420" height="">
+
+The graph above shows the predicted wind farm production forecast derived from the linear regression model. The model describes 70% of the variation in wind production. The overall changes in production are well accounted for, however the lows are significantly over predicted. This model is very simple at the moment and could likely be improved by collecting humidity, temperature, and pressure data, as these effect the air viscosity and therefore speed at which the windmill blades can spin.
+
+<a id='net_demand'></a>
+
+### Net Demand
+
+A net demand forecast is provided to inform ramping of gas and hydro plants to meet total demand for the State of California, after contributions from wind and solar.
+
+<img src="./images/renewables_net_demand_prediction.png" alt="Example" width="420" height="">
+
+**Renewables and Net Demand**
+
+After contributions from solar and wind power, there is still a significant window of demand that needs to be met to supply the state with adequate electricity. The black line on the graph above shows the demand forecast from section one, the green line shows the added solar and wind production forecasts from parts two and three, and the shaded blue region represents the predicted net demand that must by met by gas and hydro plants.
+
+<img src="./images/net_demand_forecast.png" alt="Example" width="420" height="">
+
+**Net Demand Forecast Evaluation**
+
+The red curve shows the net demand generated by sutracting wind and solar contributions from the total forecast demand. The black curve shows the actual contributions from all energy supplies but wind and solar. Since this is not a statistical model, simply a comparison of trends, there is no parameter for explanation of variance, however visual analysis shows that the forecast is well correlated to the true data.
+
+## Conclusions
+
+1. Electrical demand in California can be reasonably well forecasted from historical time series demand data
+- This model could be improved with day of year and day of week features
+- May try RNN on daily demand curves to generate 1 day forecast
+
+2. Wind speed and UV index weather reports can be useful in forecasting wind farm and solar plant production
+- Wind forecast can be improved with humidity, temperature, pressure data
+- Solar forecast can be improved with day of year and hour of day
 
 
-<a id='results'></a>
 
-## Results
-
-- Net demand forecast
-
-
-
-
-
-## Planning for population change
-The California power portfolio is not the only thing changing with time.  Making up nearly 15% of the nations GDP, California is an appealing state to live in and will likely see continued growth in the coming decades. The map below combines per capita power consumption by county multiplied by the percent population change measured between the 2010 and 2020 census.  While the units on this color scale are arbitrary, this map gives an idea of where increased demand is likely to arise in the near future. Regions of interest include the East Bay, Sacramento River Delta, northern San Joaquin Valley, Kern county and Riverside county. 
-
-<img src="./images/pc_usage-growth.png" alt="Example" width="600" height="">
 
