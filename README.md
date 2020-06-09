@@ -21,7 +21,7 @@ Section names link to methods summaries, notebook names link to jupyter notebook
 
 | Section | Notebooks | Description |
 | - | - | - |
-| <a href='#demand_forecasting'>Demand Forecasting</a> | CAISO demand scraper | Collects time series data demand data from the  California ISO webpage |
+| <a href='#demand_forecasting'>Demand Forecasting</a> | [CAISO demand scraper](https://github.com/sjhawkes/cal_power/blob/master/code/01A_DemandScraper.ipynb) | Collects time series data demand data from the  California ISO webpage |
 | | Demand EDA | Exploratory data analysis of demand data |
 | | Autogression model | Creates week ahead demand forecast from two years of time-series demand data from 2018-2020 |
 | <a href='#supply_analysis'>Supply Analysis</a> | CAISO supply scraper | Collects time series data electrical supply data from the  California ISO webpage |
